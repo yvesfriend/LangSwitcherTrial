@@ -1,0 +1,38 @@
+{% if item.column_content %}
+
+	{% set print_class_column_cells_as_card = item.column_cells_as_card ? ' _card_' : '' %}
+
+	{% for cell_content in item.column_content %}
+
+	{% set print_column_cell_id = cell_content.id ? ' id="' ~ cell_content.id ~ '"' : '' %}
+	{% set print_class_column_cell_class = cell_content.cell_class ? ' ' ~ cell_content.cell_class : '' %}
+	<div{{ print_column_cell_id }} class="_col_{{ print_class_column_cells_as_card ~ print_class_column_cell_class }}">
+
+
+		{% for element_key, content_values in cell_content %}
+
+			{% for content_key, content in content_values %}
+
+				{% for element, content_values in content %}
+
+				{% include 'partials/contents.html.twig' %}
+
+				{% endfor %}
+
+			{% endfor %}
+
+		{% endfor %}
+
+	</div>
+
+	{% endfor %}
+
+{% else %}
+
+	{% for column_cell_content in page.content|split('<hr />') %}
+	<div class="_col_{{ item.all_cell_class ? ' ' ~ item.all_cell_class : '' }}">
+		{{ column_cell_content }}
+	</div>
+	{% endfor %}
+
+{% endif %}

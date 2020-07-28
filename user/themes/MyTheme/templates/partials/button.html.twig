@@ -1,0 +1,48 @@
+{% set get_button = '' %}
+{% if item_key == 'buttons' %}
+	{% set get_button = item %}
+{% endif %}
+{% if element == 'buttons' %}
+	{% set get_button = content %}
+{% endif %}
+
+{% if get_button.buttons|length > '1' %}<div class="_button-group_">{% endif %}
+
+{% for button in get_button.buttons %}
+
+{% set print_class_button_color = button.button_color and button.button_color != 'default' ? ' _button-' ~ button.button_color ~ '_' : '' %}
+{% set print_class_button_style = button.button_style and button.button_style != 'default' ? ' _button-style-' ~ button.button_style ~ '_' : '' %}
+{% set print_class_button_icon = button.button_icon ? ' _button-has-icon_' : '' %}
+{% set print_class_button_icon_position = button.button_icon_position ? ' _button-icon-' ~ button.button_icon_position ~ '_' : '' %}
+{% set print_class_button_accent = button.button_accent ? ' _button-accent-' ~ button.button_accent ~ '_' : '' %}
+{% set print_class_button_subtext = button.button_subtext ? ' _button-has-subtext_' : '' %}
+{% set print_button_custom_class = button.button_class ? ' ' ~ button.button_class : '' %}
+
+{% set button_target = button.button_target ? ' target="_blank"' : '' %}
+
+{% set print_button_classes = print_class_button_color ~ print_class_button_accent ~ print_class_button_style ~ print_class_button_icon ~ print_class_button_icon_position ~ print_class_button_subtext ~ print_button_custom_class %}
+
+{% set btn_attr = button.button_attr|split(' | ') %}
+{% set get_btn = [] %}
+
+{% for btn in btn_attr %}
+	{% set index = loop.index %}
+	{% if index %}
+		{% set array = btn|split('=>') %}
+		{% set get_btn = get_btn|merge({ (array.0): array.1 }) %}
+	{% endif %}
+{% endfor %}
+
+{% set btn_url = 'scroll=>' in button.button_url ? '#' ~ button.button_url|split('scroll=>').1 : button.button_url %}
+
+<a href="{{ btn_url }}" class="_button_{{ print_button_classes }}"{{ button_target }}{% for btn_attr, btn_attr_value in get_btn %}{{ btn_attr ? ' ' ~ btn_attr ~ '="' ~ btn_attr_value ~ '"' : '' }}{% endfor %}>
+	{% if button.button_icon and button.button_icon_position != 'right' %}<i class="{{ button.button_icon }}"></i> {% endif %}
+	{% if button.button_subtext and button.button_subtext_position == 'top' %}<span class="_button-sub-text_">{{ button.button_subtext }}</span>{% endif %}
+	{{ button.button_text }}
+	{% if button.button_subtext and button.button_subtext_position != 'top' %}<span class="_button-sub-text_">{{ button.button_subtext }}</span>{% endif %}
+	{% if button.button_icon_position == 'right' %} <i class="{{ button.button_icon }}"></i>{% endif %}
+</a>
+
+{% endfor %}
+
+{% if get_button.buttons|length > '1' %}</div>{% endif %}

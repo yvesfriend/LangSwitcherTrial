@@ -1,0 +1,15 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block bodytag %}
+<body id="top" class="_page-error_">
+{% endblock %}
+
+{% block body %}
+    <section class="_section_ _container-image-only_">
+        <div class="_wrapper_ _wrapper-shorter_">
+        	<div class="_error_"></div>
+        	<h1>{{ 'PLUGIN_ERROR.ERROR'|t }} {{ header.http_response_code }}</h1>
+					<p>{{ page.content|raw }}</p>
+        </div>
+    </section>
+{% endblock %}

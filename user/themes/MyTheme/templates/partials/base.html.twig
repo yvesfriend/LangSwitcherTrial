@@ -1,0 +1,248 @@
+{% spaceless %}
+
+{% set theme_config = attribute(config.themes, config.system.pages.theme) %}
+{% set header_class_site_header_typography = page.header.site_header_typography_inverted ? ' _site-header-typography-dark_' : '' %}
+{% set header_class_site_header_sticky = site.site_header_sticky ? ' _site-header-sticky_' : '' %}
+{% set print_page_title_slug_class = '_page-' ~ page.slug ~ '_' %}
+{% set bodyclasses = page.header.body_classes ? ' ' ~ page.header.body_classes : '' %}
+<!DOCTYPE html>
+<html lang="{{ grav.language.getActive ?: theme_config.default_lang }}">
+<head>
+{% block head %}
+    <meta charset="utf-8" />
+    {% if header.microsite %}
+        <title>{{ header.title|e('html') }} {% if header.tagline %}&mdash; {{ header.tagline|e('html') }}{% else %} | {{ site.title|e('html') }}{% endif %}</title>
+    {% else %}
+        <title>{% if header.title and header.title != 'Home' %}{{ header.title|e('html') }} | {% endif %}{{ site.title|e('html') }} {% if site.tagline %}&mdash;{% endif %} {{ site.tagline|e('html') }}</title>
+    {% endif %}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% include 'partials/metadata.html.twig' %}
+
+    <link rel="icon" type="image/png" href="{{ url('theme://images/favicon.png') }}" />
+    <link rel="canonical" href="{{ page.url(true, true) }}" />
+
+    {% block stylesheets %}
+        {% do assets.addCss('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600i,700|Poppins:400,600', 100) %}
+        {% do assets.addCss('https://use.fontawesome.com/releases/v5.8.1/css/all.css', 99) %}
+        {% do assets.addCss('theme://css/style.css', 95) %}
+    {% endblock %}
+    {{ assets.css() }}
+
+    {% block javascripts %}
+            {% do assets.addJs('theme://js/google-tag-manager.js', 100) %}
+            {% do assets.addJs('theme://js/jquery-3.3.1.min.js', 99) %}
+            {% do assets.addJs('theme://js/jquery-migrate-3.0.1.min.js', 98) %}
+            {% do assets.addJs('theme://js/facebook-pixel-code.js', 97) %}
+
+        {% if site.site_slider %}
+            {% do assets.addJs('theme://js/slick.min.js', 96) %}
+        {% endif %}
+        {% if site.site_lightbox %}
+            {% do assets.addJs('theme://js/lightcase.js', 95) %}
+        {% endif %}
+    {% endblock %}
+    {{ assets.js() }}
+
+{% endblock head %}
+</head>
+
+{% block bodytag %}
+<body id="top" class="{{ print_page_title_slug_class ~ bodyclasses }}">
+{% endblock %}
+
+<div class="_container_">
+
+{% block header %}
+    <header class="_site-header_{{ header_class_site_header_typography ~ header_class_site_header_sticky }}">
+        <div class="_wrapper_ _column-flex_ _column-2_ _column-flex-align-items-center_">
+            <div class="_site-logo-container_">
+                <a href="{{ base_url }}/"><span class="_logo-sub_">Logo Here</span></a>
+            </div>
+            <div class="_navigation_">
+                <div class="_site-nav-icon_">
+                    <i class="fas fa-bars _menu-icon_"></i>
+                    <i class="fas fa-times _close-icon_"></i>
+                </div>
+                <nav class="_site-mobile-navigation_">
+                    {% include 'partials/menu-mobile.html.twig' %}
+                </nav>
+                <nav class="_site-navigation_">
+                {% include 'partials/menu-main.html.twig' %}
+                </nav>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+<main class="_site-body_">
+
+{% block body %}
+    <section class="_section_">
+        <div class="_wrapper_ _wrapper-shorter_">
+        {% if page.header.title %}<header>
+        <h1>{{ page.header.title }}</h1>
+        </header><div class="_divider_ _spacer-m_"></div><div class="_divider_ _border_"></div><div class="_divider_ _spacer-m_"></div>{% endif %}
+        {% block content %}{% endblock %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block before_footer %}
+{% endblock %}
+
+</main>
+
+</div>
+
+{{ assets.js('bottom') }}
+{% block bottom %}
+    <script>
+        $(document).ready(function () {
+            // Menu Icon
+            $('._site-nav-icon_').click(function() {
+                $('body').toggleClass('_site-mobile-navigation-visible_');
+                $(this).toggleClass('_site-nav-icon-active_');
+                $(this).next().toggleClass('_show_');
+            });
+            // Toggle
+            if ( $('._toggle_').length ) {
+                $('._toggle_').each(function( index ) {
+                    $(this).find('._toggle-title_').prepend('<i class="fas fa-chevron-down _toggle-icon_"></i>');
+                    $(this).click(function() {
+                        $(this).toggleClass('_toggle-show_');
+                        $(this).siblings().removeClass('_toggle-show_');
+                        $(this).find('.fas').toggleClass('fa-chevron-up','fa-chevron-down');
+                        if ( $(this).siblings().find('.fas').hasClass('fa-chevron-up') ) {
+                            $(this).siblings().find('.fas').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                        }
+                    });
+                });
+            }
+            // Tabs
+            if ( $('._tabbed_').length ) {
+                $('._tabbed_').each(function( tab ) {
+                    $(this).find('._tab-buttons_').children().append('<div id="tab-button-highlight-item"></div>');
+                    $(this).find('._tab-button-item_').each(function( index ) {
+                        var buttonId = $(this).find('a').text().replace(/\s+/g, '-');
+                        $(this).attr('data-id', buttonId);
+                        if ( $(this).hasClass('_tab-button-highlighted_') ) {
+                            $(this).removeClass('_tab-button-highlighted_').attr('id','tab-button-highlighted');
+                        }
+                        $(this).click(function() {
+                            var moveHighlight = index * ( $(this).outerWidth(true) );
+                            var idActive = $(this).attr('data-id');
+                            $(this).attr('id','tab-button-highlighted').siblings('._tab-button-item_').removeAttr('id');
+                            $(this).siblings('#tab-button-highlight-item').attr('style', '-webkit-transform:translateX(' + moveHighlight + 'px);transform:translateX(' + moveHighlight + 'px);');
+                            $(this).parents('._tab-buttons_').siblings().removeClass('_tab-content-active_');
+                            $(this).parents('._tab-buttons_').siblings('#' + idActive).addClass('_tab-content-active_');
+                        });
+                    });
+                });
+            }
+            // When scrolled to float-element
+            if ( $('#float-element').length ) {
+                var floatElement = $("#float-element");
+                var elementOffset = floatElement.offset();
+                var elementPosition = floatElement.position();
+                var elementTop = elementOffset.top + elementPosition.top;
+                var endSectionOffset = elementTop + floatElement.parents('._section_').outerHeight();
+                $(window).scroll(function() {
+                    if( $(window).scrollTop() > elementTop ) {
+                        $('#float-element').addClass('_float-this_');
+                        if( $(window).scrollTop() > ( endSectionOffset - ( floatElement.outerHeight() * 2 ) ) ) {
+                            $('#float-element').addClass('_fadeOut_');
+                        } else  if( $(window).scrollTop() < ( endSectionOffset + 150 ) ) {
+                            $('#float-element').removeClass('_fadeOut_');
+                        }
+                    } else {
+                        $('#float-element').removeClass('_float-this_');
+                    }
+                });
+            }
+            // Slick Slider
+            {% if site.site_slider %}
+                $('._slider_').slick({
+                    dots: true,
+                    infinite: true,
+                    speed: 500,
+                    cssEase: 'linear',
+                    slidesToShow: 1,
+                    autoplay: true,
+                    autoplaySpeed: 3000,
+                    adaptiveHeight: true,
+                    prevArrow: '<button class="slide-arrow prev-arrow"><i class="fas fa-angle-left"></i></button>',
+                    nextArrow: '<button class="slide-arrow next-arrow"><i class="fas fa-angle-right"></i></button>'
+                });
+                $('._slider-multiple_').slick({
+                dots: false,
+                infinite: true,
+                speed: 300,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                adaptiveHeight: false,
+                slidesToShow: 5,
+                slidesToScroll: 5,
+                prevArrow: '<button class="slide-arrow prev-arrow"><i class="fas fa-angle-left"></i></button>',
+                nextArrow: '<button class="slide-arrow next-arrow"><i class="fas fa-angle-right"></i></button>',
+                responsive: [
+                {
+                  breakpoint: 1025,
+                  settings: {
+                    slidesToShow: 4,
+                    slidesToScroll: 4,
+                    infinite: true,
+                  }
+                },
+                {
+                  breakpoint: 769,
+                  settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3
+                  }
+                },
+                {
+                  breakpoint: 601,
+                  settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2
+                  }
+                },
+                {
+                  breakpoint: 481,
+                  settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                  }
+                }
+                // You can unslick at a given breakpoint now by adding:
+                // settings: "unslick"
+                // instead of a settings object
+                ]
+            });
+            $('._slider-siriusid_').slick({
+                dots: false,
+                infinite: true,
+                speed: 500,
+                cssEase: 'linear',
+                slidesToShow: 1,
+                arrows: false,
+                fade: true,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                adaptiveHeight: false,
+            });
+            {% endif %}
+        });
+    </script>
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('a[data-rel^=lightcase]').lightcase();
+        });
+    </script>
+{% endblock %}
+
+</body>
+</html>
+
+{% endspaceless %}

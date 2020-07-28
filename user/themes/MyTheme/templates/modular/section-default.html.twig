@@ -1,0 +1,166 @@
+{% set section_id = page.header.id ? ' id="' ~ page.header.id ~ '"' : '' %}
+{% set section_style = page.header.section_style %}
+{% set section = page.header.section %}
+{% set reuse = page.header.reuse %}
+
+{% set print_class_section_as_header = section_style.section_as_header == 'true' ? ' _section-as-header_' : '' %}
+{% set print_class_section_class = section_style.class ? ' ' ~ section_style.class : '' %}
+{% set print_class_background_color = section_style.background_color in section_style|keys and section_style.background_color starts with 'custom=>' ? ' _background-color-' ~ section_style.background_color ~ '_' : '' %}
+{% set print_class_typography_white = section_style.typography_white == 'true' ? ' _typography-white_' : '' %}
+{% set print_class_negative = section_style.negative ? ' _section-negative-' ~ section_style.negative ~ '_' : '' %}
+{% set print_class_bg_image = section_style.background_image ? ' _has-background-image_' : '' %}
+{% set print_class_wrapper_shorter = section_style.wrapper_shorter == 'true' ? ' _wrapper-shorter_' : '' %}
+{% set print_class_split_screen = section_style.split_screen == 'true' ? ' _section-split-screen_' : '' %}
+{% set print_class_wrapper_class = section_style.wrapper_class ? ' ' ~ section_style.wrapper_class : '' %}
+{% set print_class_wrapper_padding_top_bottom = section_style.wrapper_padding_top_bottom ? ' _wrapper-custom-padding_' %}
+{% set print_style_wrapper_padding_top_bottom = section_style.wrapper_padding_top_bottom ? ' style="padding-top:' ~ section_style.wrapper_padding_top_bottom ~ ';padding-bottom:' ~ section_style.wrapper_padding_top_bottom ~ '"' : '' %}
+{% set print_class_particles = section_style.background_particles ? ' _has-particles_' : '' %}
+{% set print_div_background_overlay = section_style.background_overlay ? '<div class="_background-overlay_" style="background:' ~ section_style.background_overlay ~ '"></div>' : '' %}
+
+{% set print_section_style_classes = print_class_section_as_header ~ print_class_background_color ~ print_class_bg_image ~ print_class_typography_white ~ print_class_negative ~ print_class_particles ~ print_class_split_screen ~ print_class_section_class %}
+
+{% set print_style_custom_background_color = section_style.background_color starts with 'custom=>' ? 'background-color:' ~ section_style.background_color|split('=>').1 ~ ';' : '' %}
+{% set print_style_background_image = section_style.background_image ? 'background-image:url(' ~ base_url ~ '/' ~ section_style.background_image ~ ');' : '' %}
+{% set print_style_background_position = section_style.background_position ? 'background-position:' ~ section_style.background_position ~ ';' : '' %}
+{% set print_style_background_size = section_style.background_size ? 'background-size:' ~ section_style.background_size ~ ';' : '' %}
+
+{% set print_custom_inline_style = section_style.background_image or section_style.background_size or section_style.background_position or section_style.background_color starts with 'custom=>' ? ' style="' ~ print_style_custom_background_color ~ print_style_background_image ~ print_style_background_position ~ print_style_background_size ~ '"' : '' %}
+
+{{ section_style.divider == 'top' ? '<div class="_divider_ _border_"></div>' : '' }}
+
+<section{{ section_id }} class="_section_{{  print_section_style_classes  }}"{{ print_custom_inline_style }}>
+
+{% if reuse %}
+
+{% include 'modular/section-reuse.html.twig' with {'page': page.find(reuse)} %}
+
+{% else %}
+
+	<div class="_wrapper_{{ print_class_wrapper_shorter ~ print_class_wrapper_padding_top_bottom ~ print_class_wrapper_class }}"{{ print_style_wrapper_padding_top_bottom }}>
+
+		{% set slide_count = 0 %}
+		{% for slide in section %}
+			{% if slide.type == 'slide' %}
+			{% set slide_count = slide_count + 1 %}
+			{% endif %}
+		{% endfor %}
+
+		{% for item in section %}
+
+			{% set print_class_width = item.width ? ' _max-width-' ~ item.width ~ '_' : '' %}
+			{% set print_class_align_text = item.align_text ? ' _text-align-' ~ item.align_text ~ '_' : '' %}
+			{% set print_class_align_container = item.align_container ? ' _container-' ~ item.align_container ~ '_' : '' %}
+			{% set print_class_typography_white = item.typography_white ? ' _typography_white_' : '' %}
+			{% set print_class_custom = item.class ? ' ' ~ item.class : '' %}
+
+			{% set print_element_style_classes = print_class_width ~ print_class_align_text ~ print_class_align_container ~ print_class_typography_white ~ print_class_custom %}
+
+			{% set print_class_column = item.column ? '_column-flex_' : '' %}
+			{% set print_class_column_number = item.column and item.column >= 1 and item.column <= 6 ? ' _column-' ~ item.column ~ '_' : '' %}
+			{% set print_class_column_in_medium_landscape = item.column_in_medium_landscape and item.column_in_medium_landscape >= 1 and item.column_in_medium_landscape <= 6 ? ' _column-' ~ item.column_in_medium_landscape ~ '-screen-medium-landscape_' : '' %}
+			{% set print_class_column_in_medium_portrait = item.column_in_medium_portrait and item.column_in_medium_portrait >= 1 and item.column_in_medium_portrait <= 6 ? ' _column-' ~ item.column_in_medium_portrait ~ '-screen-medium-portrait_' : '' %}
+			{% set print_class_column_in_small = item.column_in_small and item.column_in_small >= 1 and item.column_in_small <= 6 ? ' _column-' ~ item.column_in_small ~ '-screen-small_' : '' %}
+			{% set print_class_column_class = item.column_class ? ' ' ~ item.column_class : '' %}
+
+			{% set print_element_column_classes = print_class_column ~ print_class_column_number ~ print_class_column_in_medium_landscape ~ print_class_column_in_medium_portrait ~ print_class_column_in_small ~ print_class_column_class %}
+
+			{% set print_custom_style = item.style ? ' style="' ~ item.style ~ '"' : '' %}
+			{% set print_screen_background_color = item.screen_background_color ? 'background-color:' ~ item.screen_background_color|split('=>').1 ~ ';' : '' %}
+			{% set print_screen_background_image = item.screen_background_image ? 'background-image:url(' ~ base_url ~ '/' ~ item.screen_background_image ~ ');' : '' %}
+			{% set print_screen_background_size = item.screen_background_size ? 'background-size:' ~ item.screen_background_size ~ ';' : '' %}
+			{% set print_screen_background_position = item.screen_background_position ? 'background-position:' ~ item.screen_background_position ~ ';' : '' %}
+			{% set print_screen_background = item.screen_background_color or item.screen_background_image or item.screen_background_size or item.screen_background_position ? ' style="' ~ print_screen_background_image ~ print_screen_background_color ~ print_screen_background_size ~ print_screen_background_position ~ '"' : '' %}
+
+			{% set print_class_slide = item.type == 'slide' and loop.index0 == '1' ? ' _slider_' : '' %}
+
+			{% if item.type != 'header' and item.type != 'footer' %}
+				{% if not ( item.type == 'slide' and loop.index0 > '1' ) %}
+					{% if ( section_style.split_screen == 'true' and item.type == 'split' ) %}
+						<div class="_split-screen_ _split-screen-{{ item.screen }}_{{ item.screen_mobile_order ? ' _split-screen-mobile-order-' ~ item.screen_mobile_order ~ '_' : '' }}{{ item.screen_image == 'true' ? ' _split-screen-image_' : '' }}"{{ print_screen_background }}>
+							{% if item.screen_mobile_order == 2 %}<div class="_arrow-pointer_" style="border-bottom-color: {{ item.screen_background_color|split('=>').1 }}"></div>{% endif %}
+							<div class="_split-screen-wrapper_">
+					{% endif %}
+					<div{{ item.id ? ' id="' ~ item.id ~ '"' : '' }} class="_section-element_ _section-content_{{ print_element_style_classes ~ print_class_slide }}"{{ print_custom_style }}>
+				{% endif %}
+			{% else %}
+				<{{ item.type }}{{ item.id ? ' id="' ~ item.id ~ '"' : '' }} class="_section-element_ _section-{{ item.type }}_{{ print_element_style_classes }}"{{ print_custom_style }}>
+			{% endif %}
+
+			{% for item_key, item_value in item %}
+
+				{% include 'partials/contents-for-section.html.twig' %}
+
+				{% if item_key == 'contents' %}
+
+					{% for get_contents in item.contents %}
+						{% for element_key, content_values in get_contents %}
+
+							{% for content_key, content in content_values %}
+
+								{% for element, content_values in content %}
+
+								{% include 'partials/contents.html.twig' %}
+
+								{% endfor %}
+
+							{% endfor %}
+
+						{% endfor %}
+					{% endfor %}
+
+					{% for content_key, content in item_value %}
+						{% for element, get_content in content %}
+							{% include 'partials/contents.html.twig' %}
+						{% endfor %}
+					{% endfor %}
+				{% endif %}
+
+				{% if item_key == 'column' %}
+
+					{% if item.column and item.column >= 1 and item.column <= 6 %}
+
+						<div class="{{ print_element_column_classes }}">
+						{% include 'partials/column-cells.html.twig' %}
+						</div>
+
+					{% endif %}
+
+				{% endif %}
+
+			{% endfor %}
+
+			{% if item.type != 'header' and item.type != 'footer' %}
+				{% if not ( item.type == 'slide' and loop.index0 < slide_count ) %}
+					</div>
+					{% if ( section_style.split_screen == 'true' and item.type == 'split' ) %}
+						</div>
+					</div>
+					{% endif %}
+				{% endif %}
+			{% else %}
+				</{{ item.type }}>
+			{% endif %}
+
+		{% endfor %}
+
+		{% if page.header.form %}
+		{% include "forms/form.html.twig" %}
+		{% endif %}
+
+	</div>
+
+	{{ print_div_background_overlay }}
+
+	{% if section_style.background_video %}
+		<div class="_wrapper-background-video_">
+			<video autoplay muted loop id="VideoHeader" class="_background-video_">
+				<source src="{{ section_style.background_video }}" type="video/mp4">
+			</video>
+		</div>
+	{% endif %}
+
+{% endif %}
+
+</section>
+
+{{ section_style.divider == 'bottom' ? '<div class="_divider_ _border_"></div>' : '' }}

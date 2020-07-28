@@ -1,0 +1,20 @@
+{% if content.links|length > '1' %}<div class="_link-group_">{% endif %}
+
+{% for this_link in content.links %}
+
+	{% set link_attr = this_link.link|split(' | ') %}
+	{% set get_link = [] %}
+
+	{% for lnk in link_attr %}
+		{% set index = loop.index %}
+		{% if index %}
+			{% set array = lnk|split('=>') %}
+			{% set get_link = get_link|merge({ (array.0): array.1 }) %}
+		{% endif %}
+	{% endfor %}
+
+	{% if get_link.url %}<a href="{{ get_link.url }}"{% if get_link.button or get_link.class %} class="{{ get_link.button ? '_button_' : '' }}{{ get_link.class ? ' ' ~ get_link.class : '' }}{{ get_link.icon ? ' _link-has-icon_' : '' }}"{% endif %}{{ get_link.target ? ' target="' ~ get_link.target ~ '"' : '' }}{% for link_attr, link_attr_value in get_link %}{{ link_attr starts with 'link_' ? ' ' ~ link_attr|split('link_').1 ~ '="' ~ link_attr_value ~ '"' : '' }}{% endfor %}>{% endif %}{{ get_link.icon ? ' <i class="' ~ get_link.icon ~ '"></i>' : '' }} {{ get_link.text ? get_link.text : '' }}{{ get_link.url ? '</a>' : '' }}
+
+{% endfor %}
+
+{% if content.links|length > '1' %}</div>{% endif %}

@@ -1,0 +1,117 @@
+{% macro loop(page) %}
+    {% for p in page.children.visible %}
+        {% set current_page = (p.active or p.activeChild) ? ' _menu-item-current_' : '' %}
+        {% set get_custom_url = p.header.custom_url ? p.header.custom_url : p.url %}
+        {% set get_custom_url_open_new_window = p.header.custom_url_open_new_window == 'true' ? ' target="_blank"' : '' %}
+        {% set menu_item_has_child_class = p.header.enable_submenu ? ' _menu-item-has-child_' : '' %}
+
+        <li class="_menu-item_ _menu-item-{{ loop.index }}_{{ menu_item_has_child_class }}{{ current_page }}">
+            <a href="{{ p.header.disable_link ? url('/') : get_custom_url }}"{{ get_custom_url_open_new_window }}{{ p.header.disable_link ? ' onClick="return false"' : '' }}>
+                <span>{{ p.menu }}{% if p.header.custom_url_open_new_window %} <i class="fas fa-external-link-alt"></i>{% endif %}</span>
+                {% if p.header.menu_desc %}
+                <span class="_menu-item-description_">{{ p.header.menu_desc }}</span>
+                {% endif %}
+            </a>
+            {% if p.header.submenus %}
+                <ul class="_sub-menu_">
+                    {% for submenu in p.header.submenus %}
+                        <li class="_menu-item_ _menu-item-{{ loop.index }}_{{ submenu.childmenu ? ' _menu-item-has-child_' : '' }}">
+                            {% if 'scroll=>' in submenu.link %}
+                                {% set scroll_url = submenu.link|split('=>').0 %}
+                                {% set get_scroll_url = scroll_url|split('_').0 == 'home' ? '.' : scroll_url|split('_').0 %}
+                                {% set do_link = get_scroll_url ~ '#' ~ submenu.link|split('=>').1 %}
+                            {% elseif submenu.link == '0' %}
+                                {% set do_link = '.' %}
+                            {% else %}
+                                {% set do_link = submenu.link %}
+                            {% endif %}
+                            {% set the_link = page.header.custom_url ? page.header.custom_url : do_link %}
+                            <a href="{{ submenu.disable_link ? url('/') : the_link }}"{{ submenu.icon ? 'class="_column-flex_ _column-1-4-and-3-4_"' : '' }}{{ submenu.disable_link ? ' onClick="return false"' : '' }}{{ submenu.new_window ? ' target="_blank"' : '' }}>
+                                {% if submenu.icon %}
+                                    <span class="_menu-item-icon_ _menu-item-icon-{{ submenu.icon }}_ _col_"></span>
+                                    <span class="_menu-item-text_ _col_">
+                                {% endif %}
+                                    <span class="_menu-item-name_">{{ submenu.name }}{% if submenu.new_window %} <i class="fas fa-external-link-alt"></i>{% endif %}</span>
+                                    {% if submenu.description %}
+                                        <span class="_menu-item-description_">{{ submenu.description }}</span>
+                                    {% endif %}
+                                {% if submenu.icon %}
+                                    </span>
+                                {% endif %}
+                            </a>
+                            {% if submenu.childmenu %}
+                            <ul class="_sub-menu_ _sub-menu-more-child_">
+                                {% for child in submenu.childmenu %}
+                                <li class="_menu-item_ _menu-item-{{ loop.index }}_">
+                                    {% if 'scroll=>' in child.link %}
+                                        {% set scroll_url = child.link|split('=>').0 %}
+                                        {% set get_scroll_url = scroll_url|split('_').0 == 'home' ? url('/') : scroll_url|split('_').0 %}
+                                        {% set child_link = get_scroll_url ~ '#' ~ child.link|split('=>').1 %}
+                                    {% else %}
+                                        {% if child.link starts with 'http' %}
+                                            {% set child_link = child.link %}
+                                        {% else %}
+                                            {% set child_link = 'baseurl=>' in child.link ? url('/') ~ child.link|split('=>').1 : child.link %}
+                                        {% endif %}
+                                    {% endif %}
+                                    <a href="{{ child_link }}"{{ child.disable_link ? ' onClick="return false"' : '' }}{{ child.new_window ? ' target="_blank"' : '' }}>
+                                        <span>{{ child.name }} {% if child.new_window %}<i class="fas fa-external-link-alt"></i>{% endif %}</span>
+                                        {% if child.description %}
+                                        <span class="_menu-item-description_">{{ child.description }}</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+        {% if loop.index == '4' %}
+        <li class="_menu-item_ _menu-item-{{ loop.index + 1 }}_ _menu-item-has-child_ _menu-item-has-child-more_">
+            <a href="{{ url('/') }}" onClick="return false;">More</a>
+            <div class="_sub-menu_ _sub-menu-has-feature_">
+                <ul class="_sub-menu_">
+        {% endif %}
+
+        {% if loop.last %}
+                </ul>
+            </div>
+            <li class="_menu-item_ _menu-item-right_"><a href="#Get-In-Touch"><i class="fas fa-envelope-open-text"></i> <span>Get In Touch</span></a>
+            {% include 'partials/menu/menu-item-lang.html.twig' %}</li>
+            {% include 'partials/langswitcher.html.twig' %}
+        </li>
+        {% endif %}
+
+    {% endfor %}
+
+
+{% endmacro %}
+
+<ul class="_menu_">
+    {% if theme_config.dropdown.enabled %}
+        {{ _self.loop(pages) }}
+    {% else %}
+        {% for page in pages.children.visible %}
+            {% set get_url = page.header.custom_url ? page.header.custom_url : page.url %}
+            {% set current_page = (page.active or page.activeChild) ? '_menu-item-current_' : '' %}
+            <li class="_menu-item_ {{ current_page }}">
+                <a href="{{ get_url }}">
+                    {% if page.header.icon %}<i class="fa fa-{{ page.header.icon }}"></i>{% endif %}
+                    {{ page.menu }}
+                </a>
+            </li>
+        {% endfor %}
+    {% endif %}
+    {% for mitem in site.menu %}
+        <li>
+            <a href="{{ mitem.url }}">
+                {% if mitem.icon %}<i class="fa fa-{{ mitem.icon }}"></i>{% endif %}
+                {{ mitem.text }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+{% include 'partials/langswitcher.html.twig' %}

@@ -1,0 +1,12 @@
+{% if item_key == 'heading' %}<h4 class="_section-title_">{{ item.heading }}</h4>{% endif %}
+{% if item_key == 'subheading' %}<h3 class="_section-sub-title_">{{ item.subheading }}</h3>{% endif %}
+{% if item_key == 'paragraph' %}<p>{{ item.paragraph }}</p>{% endif %}
+
+{% if item_key == 'divider' %}<div class="_divider_ _{{ item.divider }}_"></div>{% endif %}
+{% if item_key == 'spacer' %}<div class="_divider_ _spacer-{{ item.spacer }}_"></div>{% endif %}
+
+{% if item_key == 'buttons' %}
+
+	{% include 'partials/button.html.twig' %}
+
+{% endif %}

@@ -1,0 +1,122 @@
+{% if element == 'image' %}
+
+	<figure{{ item.column_cells_as_card ? ' class="_card-element_ _card-image_"' : '' }}>
+		{% set image_attr = content.image|split(' | ') %}
+		{% if '=>' in content.image %}
+
+			{% set get_image = [] %}
+
+			{% for img in image_attr %}
+				{% set index = loop.index %}
+				{% if index %}
+					{% set array = img|split('=>') %}
+					{% set get_image = get_image|merge({ (array.0): array.1 }) %}
+				{% endif %}
+			{% endfor %}
+
+			{% set img_link_target = get_image.target ? ' target="' ~ get_image.target ~ '"' : '' %}
+
+			{% if get_image.url %}<a href="{{ get_image.url }}"{{ img_link_target }}{% for img_link_attr, img_link_attr_value in get_image %}{{ img_link_attr starts with 'link_' and img_link_attr != 'link_data_lc_options' ? ' ' ~ img_link_attr|split('link_').1|replace({'_':'-'}) ~ '="' ~ img_link_attr_value ~ '"' : '' }}{% endfor %}{{ get_image.link_data_lc_options ? ' data-lc-options=' ~ get_image.link_data_lc_options : '' }}>{% endif %}<img{% for img_attr, img_attr_value in get_image %}{% if img_attr != 'url' and img_attr != 'target' and ( img_attr starts with 'link_' == false ) %}{% if img_attr == 'src' %}{{ img_attr_value starts with 'images/' ? ' ' ~ img_attr ~ '="' ~ base_url ~ '/' ~ img_attr_value ~ '"' : ' ' ~ img_attr ~ '="' ~ img_attr_value ~ '"' }}{% else %}{{ ' ' ~ img_attr ~ '="' ~ img_attr_value ~ '"' }}{% endif %}{% endif %}{% endfor %} />{% if get_image.url %}</a>{% endif %}
+
+		{% else %}
+
+			<img{{ content.image ? ' src="' ~ content.image ~ '"' : '' }} />
+
+		{% endif %}
+	</figure>
+
+{% endif %}
+
+{% if element == 'divider' %}<div class="_divider_ _{{ content.divider }}_"></div>{% endif %}
+
+{% if element == 'spacer' %}<div class="_divider_ _spacer-{{ content.spacer }}_"></div>{% endif %}
+
+{% if element == 'heading' %}<h4 class="_section-title_">{{ content.heading }}</h4>{% endif %}
+
+{% if element == 'subheading' %}<h3 class="_section-sub-title_">{{ content.subheading }}</h3>{% endif %}
+
+{% if element == 'title' %}
+
+	{% if item.column_cells_as_card %}<header{{ item.column_cells_as_card ? ' class="_card-element_ _card-header_"' : '' }}>{% endif %}
+		{% set title_attr = content.title|split(' | ') %}
+		{% set class_print_card_title = item.column_cells_as_card ? '_card-title_' : '' %}
+
+		{% if '=>' in content.title %}
+
+			{% set get_title = [] %}
+
+			{% for ttl in title_attr %}
+				{% set index = loop.index %}
+				{% if index %}
+					{% set array = ttl|split('=>') %}
+					{% set get_title = get_title|merge({ (array.0): array.1 }) %}
+				{% endif %}
+			{% endfor %}
+
+			{% set title_tag = get_title.tag ? get_title.tag : 'h6' %}
+			{% set print_title_tag_class = get_title.class or item.column_cells_as_card ? ' class="' ~ class_print_card_title ~ get_title.class ~ '"' : '' %}
+
+			{% set print_title_icon = get_title.icon ? '<i class="' ~ get_title.icon ~ '"></i>' : '' %}
+			{% set print_title_icon_left = ( get_title.icon or get_title.iconpos == 'left' ) and get_title.iconpos != 'right' ? print_title_icon ~ ' ' : '' %}
+			{% set print_title_icon_right = get_title.iconpos == 'right' ? ' ' ~ print_title_icon : '' %}
+			{% set print_title_tag_style = get_title.style ? ' style="' ~ get_title.style ~ '"' : '' %}
+
+			<{{ title_tag }}{{ print_title_tag_class }}{{ print_title_tag_style }}>{{ get_title.url ? '<a href="' ~ get_title.url ~ '"' : '' }}{% for ttle_link_attr, ttle_link_attr_value in get_title %}{{ ttle_link_attr starts with 'link_' and ttle_link_attr != 'link_data_lc_options' and ttle_link_attr != 'icon' and ttle_link_attr != 'iconpos' ? ' ' ~ ttle_link_attr|split('link_').1|replace({'_':'-'}) ~ '="' ~ ttle_link_attr_value ~ '"' : '' }}{% endfor %}{{ get_title.link_data_lc_options ? ' data-lc-options=' ~ get_title.link_data_lc_options : '' }}{{ get_title.url ? '>' : '' }}{{ print_title_icon_left }}{{ get_title.text }}{{ print_title_icon_right }}{{ get_title.url ? '</a>' : '' }}</{{ title_tag }}>
+
+		{% else %}
+
+			<h6{{ item.column_cells_as_card ? ' class="' ~ class_print_card_title ~ '"' : '' }}>{{ content.title }}</h6>
+
+		{% endif %}
+	{% if item.column_cells_as_card %}</header>{% endif %}
+
+{% endif %}
+
+{% if element == 'list' %}
+	<ul>
+	{% for li in content.list %}
+	<li>{{ li }}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
+
+{% if element == 'paragraph' %}
+
+	{{ item.column_cells_as_card ? '<div class="_card-element_ _card-body_">' : '' }}
+		<p>{{ content.paragraph }}</p>
+	{{ item.column_cells_as_card ? '</div>' : '' }}
+
+{% endif %}
+
+{% if element == 'link' %}
+
+	<div{{ item.column_cells_as_card ? ' class="_card-element_ _card-footer_"' : '' }}>
+		{% set link_attr = content.link|split(' | ') %}
+		{% set get_link = [] %}
+
+		{% for lnk in link_attr %}
+			{% set index = loop.index %}
+			{% if index %}
+				{% set array = lnk|split('=>') %}
+				{% set get_link = get_link|merge({ (array.0): array.1 }) %}
+			{% endif %}
+		{% endfor %}
+
+		{% if get_link.url %}<a href="{{ get_link.url }}"{% if get_link.button or get_link.class %} class="{{ get_link.button ? '_button_' : '' }}{{ get_link.class ? ' ' ~ get_link.class : '' }}"{% endif %}{{ get_link.target ? ' target="' ~ get_link.target ~ '"' : '' }}{% for link_attr, link_attr_value in get_link %}{{ link_attr starts with 'link_' ? ' ' ~ link_attr|split('link_').1 ~ '="' ~ link_attr_value ~ '"' : '' }}{% endfor %}>{% endif %}{{ get_link.text ? get_link.text : '' }}{{ get_link.icon ? ' <i class="' ~ get_link.icon ~ '"></i>' : '' }}{{ get_link.url ? '</a>' : '' }}
+	</div>
+
+{% endif %}
+
+{% if element == 'links' %}
+
+	<div{{ item.column_cells_as_card ? ' class="_card-element_ _card-footer_"' : '' }}>
+	{% include 'partials/links.html.twig' %}
+	</div>
+
+{% endif %}
+
+{% if element == 'buttons' %}
+
+	{% include 'partials/button.html.twig' %}
+
+{% endif %}
