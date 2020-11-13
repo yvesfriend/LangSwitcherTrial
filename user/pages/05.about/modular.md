@@ -4,6 +4,7 @@ enable_submenu: true
 
 submenus:
     - name: Sub heading 1
+      link: 
     - name: Sub heading 2
     - name: Sub heading 3
 

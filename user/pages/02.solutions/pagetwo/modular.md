@@ -1,6 +1,9 @@
 ---
-title: Home
+title: Page 2
+tagline: This is the content for page 2
+microsite: true
 visible: false
+
 
 content:
     items: @self.modular
@@ -9,6 +12,4 @@ content:
         dir: asc
         custom:
             - _section-as-header
-            - _section-one
-            - _section-two
 ---
