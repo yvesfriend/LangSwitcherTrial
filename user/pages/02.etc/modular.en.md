@@ -23,7 +23,6 @@ content:
         dir: asc
         custom:
             - _section-as-header
-            - _solutions
-            - _apps
+            - _section-etc-content
             - _get-started
 ---

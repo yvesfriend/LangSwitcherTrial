@@ -18,7 +18,7 @@ section:
         - content:
             - spacer: m
             - spacer: s
-            - title: tag=>h1 | text=>Section 1 Content | style=>margin-bottom:20px;max-width:750px;
+            - title: tag=>h1 | text=>Etc Page | style=>margin-bottom:20px;max-width:750px;
             - title: tag=>h5 | text=>Sub description
             - spacer: s
             - buttons:

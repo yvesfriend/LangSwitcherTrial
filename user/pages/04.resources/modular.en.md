@@ -1,12 +1,12 @@
 ---
-title: Heading 3
+title: Contact Us
 body_classes: _lightcase-fullwidth_
-enable_submenu: true
+# enable_submenu: true
 
-submenus:
-    - name: Sub heading 1
-    - name: Sub heading 2
-    - name: Sub heading 3
+# submenus:
+#     - name: Sub heading 1
+#     - name: Sub heading 2
+#     - name: Sub heading 3
 
 content:
     items: @self.modular

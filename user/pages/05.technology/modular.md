@@ -1,5 +1,5 @@
 ---
-title: Heading 2
+title: Navigation 3
 enable_submenu: true
 
 submenus:
